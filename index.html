@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d13">
+  <title>TACTICAL ARENA 8.0 — Elite Squad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+<div id="game">
+  <header id="topBar">
+    <div class="brand">
+      <div class="brand-mark">T<span>A</span></div>
+      <div>
+        <div class="brand-name">TACTICAL ARENA</div>
+        <div class="brand-sub">SQUAD OPERATIONS / 8.0</div>
+      </div>
+    </div>
+
+    <div class="match-score">
+      <div class="team-score alpha"><small>ALPHA</small><strong id="teamScore">00</strong></div>
+      <div class="score-divider"><span>VS</span><small id="roundText">ROUND 01</small></div>
+      <div class="team-score bravo"><small>BRAVO</small><strong id="enemyScore">00</strong></div>
+    </div>
+
+    <div class="clock-block">
+      <small>ROUND TIME</small>
+      <strong id="roundClock">02:00</strong>
+    </div>
+
+    <div class="top-status"><span class="live-dot"></span><span>LIVE OPERATION</span></div>
+  </header>
+
+  <section id="objectivePanel">
+    <div class="objective-icon">A</div>
+    <div class="objective-content">
+      <small>ACTIVE OBJECTIVE</small>
+      <strong id="objectiveText">ELIMINATE HOSTILES</strong>
+      <span id="bombTimer">AREA A — SECURE THE ZONE</span>
+    </div>
+  </section>
+
+  <div id="performancePanel">
+    <div class="performance-item"><small>FPS</small><strong id="fpsValue">--</strong></div>
+    <div class="performance-item ping"><small>PING</small><strong id="pingValue">OFFLINE</strong></div>
+  </div>
+
+  <aside id="leftPanel" class="glass-panel">
+    <div class="panel-heading"><span>PLAYER STATUS</span><span class="status-live">● LIVE</span></div>
+    <div class="player-profile">
+      <div class="avatar">A</div>
+      <div><strong>OPERATOR</strong><small>ALPHA UNIT / 01</small></div>
+    </div>
+
+    <div class="stat-heading"><span>HEALTH</span><strong id="health">100</strong></div>
+    <div class="bar"><div id="healthFill" class="bar-fill health-fill"></div></div>
+
+    <div class="stat-heading"><span>ARMOR</span><strong id="armor">100</strong></div>
+    <div class="bar"><div id="armorFill" class="bar-fill armor-fill"></div></div>
+
+    <div class="stat-heading"><span>STAMINA</span><strong id="staminaValue">100</strong></div>
+    <div class="bar"><div id="staminaFill" class="bar-fill stamina-fill"></div></div>
+
+    <div class="stat-grid">
+      <div><small>KILLS</small><strong id="kills">00</strong></div>
+      <div><small>DEATHS</small><strong id="deaths">00</strong></div>
+      <div><small>HOSTILES</small><strong id="botsAlive">05</strong></div>
+    </div>
+
+    <div class="panel-separator"></div>
+
+    <div id="squadPanel">
+      <div class="squad-heading"><span>ОТРЯД ALPHA</span><span id="squadCount">03 / 03</span></div>
+      <div id="squadMembers"></div>
+      <div id="regenStatus" class="regen-status">СТАТУС: СТАБИЛЬНО</div>
+    </div>
+
+    <div id="roundPoints">ALPHA 0 : 0 BRAVO</div>
+  </aside>
+
+  <aside id="rightPanel" class="glass-panel">
+    <div class="panel-heading"><span>WEAPON SYSTEM</span><span class="weapon-ready">READY</span></div>
+
+    <div class="weapon-visual">
+      <div class="weapon-silhouette">◈</div>
+      <div><small>SELECTED WEAPON</small><strong id="weaponName">MK-01 VANGUARD</strong></div>
+    </div>
+
+    <div class="ammo-display"><strong id="ammoNow">30</strong><span>/</span><span id="ammoReserve">120</span></div>
+    <div class="ammo-label"><span>MAGAZINE</span><span>RESERVE</span></div>
+
+    <div class="weapon-slots">
+      <div class="weapon-slot selected" id="slot1">01<span>RIFLE</span></div>
+      <div class="weapon-slot" id="slot2">02<span>DMR</span></div>
+      <div class="weapon-slot" id="slot3">03<span>SHOTGUN</span></div>
+    </div>
+
+    <div class="difficulty-readout">DIFFICULTY <strong id="difficultyReadout">OPERATIVE</strong></div>
+  </aside>
+
+  <div id="crosshair">
+    <i class="top"></i><i class="bottom"></i><i class="left"></i><i class="right"></i>
+    <div class="crosshair-dot"></div>
+  </div>
+
+  <div id="hitMarker">×</div>
+  <div id="damageOverlay"></div>
+  <div id="vignette"></div>
+  <div id="centerMessage"></div>
+
+  <div id="respawnNotice" class="hidden">
+    OPERATOR DOWN
+    <strong id="respawnCountdown">3</strong>
+  </div>
+
+  <footer id="bottomBar">
+    <div><span class="key-hint">W A S D</span> MOVE <span class="hint-divider"></span><span class="key-hint">SHIFT</span> SPRINT</div>
+    <div><span class="key-hint">E</span> PLANT C4 AT AREA A</div>
+    <div><span class="key-hint">R</span> RELOAD <span class="hint-divider"></span><span class="key-hint">ESC</span> PAUSE</div>
+  </footer>
+
+  <section id="startScreen" class="screen">
+    <div class="menu-background"></div>
+    <div class="menu-content">
+      <div class="menu-topline"><span>TACTICAL DIVISION</span><span>EST. 2026</span></div>
+
+      <div class="menu-title">
+        <div class="title-small">SQUAD-BASED COMBAT SIMULATION</div>
+        <h1>TACTICAL<br><span>ARENA</span></h1>
+        <div class="title-version">ELITE SQUAD <b>V 8.0</b></div>
+      </div>
+
+      <div class="menu-description">LEAD YOUR SQUAD. HOLD THE AREA.<br>EVERY ROUND COUNTS.</div>
+
+      <label class="duration-label" for="roundDurationSelect">ROUND DURATION</label>
+      <select id="roundDurationSelect" class="duration-select">
+        <option value="120" selected>2 MINUTES — QUICK MATCH</option>
+        <option value="300">5 MINUTES — FULL MATCH</option>
+      </select>
+
+      <label class="duration-label" for="difficultySelect">DIFFICULTY</label>
+      <select id="difficultySelect" class="duration-select">
+        <option value="recruit">RECRUIT — FRIENDLY</option>
+        <option value="operative" selected>OPERATIVE — NORMAL</option>
+        <option value="veteran">VETERAN — HARD</option>
+        <option value="nightmare">NIGHTMARE — EXTREME</option>
+      </select>
+
+      <div id="difficultyDescription" class="difficulty-description">
+        Сбалансированный бой: враги меткие, но союзники хорошо помогают.
+      </div>
+
+      <button id="startButton" class="main-button"><span>DEPLOY TO BATTLE</span><b>→</b></button>
+
+      <div class="menu-footer">
+        <span>WASD — MOVE</span><span>MOUSE — AIM</span>
+        <span>LEFT CLICK — FIRE</span><span>3 ALLIES — ALPHA SQUAD</span>
+      </div>
+    </div>
+    <div class="menu-corner">CLASSIFIED<br>OPERATION 08-A</div>
+  </section>
+
+  <section id="roundScreen" class="screen hidden">
+    <div class="result-card">
+      <div class="result-kicker">MISSION REPORT</div>
+      <div id="roundResult" class="result-title">VICTORY</div>
+      <div id="roundDescription" class="result-description">Round completed.</div>
+      <div class="result-points">ROUND SCORE <strong id="resultPoints">0 : 0</strong></div>
+      <div class="result-stats">
+        <div><small>KILLS</small><strong id="resultKills">00</strong></div>
+        <div><small>DEATHS</small><strong id="resultDeaths">00</strong></div>
+        <div><small>ROUND</small><strong id="resultRound">01</strong></div>
+      </div>
+      <button id="nextRoundButton" class="main-button"><span>CONTINUE OPERATION</span><b>→</b></button>
+    </div>
+  </section>
+
+  <section id="pauseScreen" class="screen hidden">
+    <div class="result-card">
+      <div class="result-kicker">OPERATION SUSPENDED</div>
+      <div class="result-title">PAUSED</div>
+      <div class="result-description">Your squad is waiting.</div>
+      <button id="resumeButton" class="main-button"><span>RESUME GAME</span><b>→</b></button>
+    </div>
+  </section>
+</div>
+
+<script src="script.js?v=8"></script>
+</body>
+</html>
